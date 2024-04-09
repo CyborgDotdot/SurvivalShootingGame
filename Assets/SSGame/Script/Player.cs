@@ -56,4 +56,8 @@ public class Player : MonoBehaviour
         // Player ¿Ãµø
         transform.position = clampedPosition;
     }
+    public void TakeDamage(int damage)
+    {
+        GameManager.instance.TakeDamage(damage);
+    }
 }
