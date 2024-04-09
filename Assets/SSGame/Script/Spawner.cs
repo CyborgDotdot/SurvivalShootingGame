@@ -1,25 +1,24 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Tilemaps; // Tilemap 사용을 위해 필요
 
 public class Spawner : MonoBehaviour
 {
-    public Tilemap tilemap; // 스폰 위치 결정에 사용될 Tilemap의 참조
+    public CircleCollider2D spawnArea; // 스폰 위치 결정에 사용될 CircleCollider2D의 참조
     public float startTime = 1; // 몬스터 생성 시작 시간
-    public float spawnDuration = 10; // 몬스터 생성 지속 시간
+    public float spawnDuration = 30; // 몬스터 생성 지속 시간
 
     [SerializeField]
     private GameObject[] monsters;
 
     void Start()
     {
-        if (tilemap != null)
+        if (spawnArea != null)
         {
             StartCoroutine(SpawnMonsters(0, spawnDuration));
         }
         else
         {
-            Debug.LogError("Tilemap is not assigned in the Spawner.");
+            Debug.LogError("CircleCollider2D is not assigned in the Spawner.");
         }
     }
 
@@ -30,24 +29,18 @@ public class Spawner : MonoBehaviour
         {
             yield return new WaitForSeconds(startTime);
 
-            // TilemapCollider2D의 경계를 기반으로 무작위 위치 결정
-            Vector3 min = tilemap.localBounds.min;
-            Vector3 max = tilemap.localBounds.max;
-            float x = Random.Range(min.x, max.x);
-            float y = Random.Range(min.y, max.y);
-            Vector2 spawnPosition = new Vector2(x, y);
+            // CircleCollider2D의 위치 및 반지름을 기반으로 무작위 위치 결정
+            Vector2 center = spawnArea.transform.position;
+            float radius = spawnArea.radius;
+            Vector2 spawnPosition = center + Random.insideUnitCircle * radius;
 
-            // 생성된 위치가 실제 타일 위에 있는지 확인
-            Vector3Int cellPosition = tilemap.WorldToCell(spawnPosition);
-            if (tilemap.HasTile(cellPosition))
-            {
-                Instantiate(monsters[monsterIndex], spawnPosition, Quaternion.identity);
-            }
+            // 해당 위치에 몬스터 생성
+            Instantiate(monsters[monsterIndex], spawnPosition, Quaternion.identity);
         }
 
         if (monsterIndex + 1 < monsters.Length)
         {
-            StartCoroutine(SpawnMonsters(monsterIndex + 1, duration + 20)); // 다음 몬스터 생성 시작
+            StartCoroutine(SpawnMonsters(monsterIndex + 1, duration + 5)); // 다음 몬스터 생성 시작
         }
     }
 }

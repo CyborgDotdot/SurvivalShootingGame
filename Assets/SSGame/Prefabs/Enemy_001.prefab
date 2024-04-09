@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 8922819118191006898}
   m_Layer: 0
   m_Name: Enemy_001
-  m_TagString: Untagged
+  m_TagString: Monster
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -99,7 +99,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd3e685d8b60c9e43a7e67ee35909976, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 3
+  mSpeed: 3
+  mHealth: 1
+  mDamage: 1
+  mEffect: {fileID: 1201766532104106504, guid: 16f3997c9befa9b40a4404fa73325bcb, type: 3}
+  mItem: {fileID: 4530950704843405045, guid: 85bf732d836a319429df81aca02b56df, type: 3}
 --- !u!58 &7916995297092723421
 CircleCollider2D:
   m_ObjectHideFlags: 0
