@@ -9,9 +9,6 @@ public class Player : MonoBehaviour
     public Rigidbody2D gRigidbody;
     [SerializeField] private float moveSpeed;
 
-    [SerializeField] private float magnetRange = 3f; // 자석의 범위
-    [SerializeField] private float magnetPower = 5f; // 자석의 힘
-
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -42,7 +39,6 @@ public class Player : MonoBehaviour
         else
             animator.SetBool("front", false);
 
-        AttractGems();
 
         // 잠재적 새 위치 계산
         Vector3 newPosition = transform.position + new Vector3(moveX, moveY, 0);
@@ -64,28 +60,6 @@ public class Player : MonoBehaviour
     public void TakeDamage(int damage)
     {
         GameManager.instance.TakeDamage(damage);
-    }
-    void AttractGems()
-    {
-        // 현재 위치 주변에서 Gem 태그를 가진 모든 오브젝트를 찾습니다.
-        Collider2D[] gems = Physics2D.OverlapCircleAll(transform.position, magnetRange, LayerMask.GetMask("Gem"));
-
-        foreach (Collider2D gem in gems)
-        {
-            if (gem != null && gem.GetComponent<Rigidbody2D>() != null)
-            {
-                Rigidbody2D gemRigidbody = gem.GetComponent<Rigidbody2D>();
-                Vector2 direction = transform.position - gem.transform.position;
-                float distance = direction.magnitude;
-
-                // 거리에 따라 속도 조절
-                float speedModifier = Mathf.Clamp01(1 - distance / magnetRange);
-                Vector2 newVelocity = direction.normalized * magnetPower * speedModifier;
-
-                // Rigidbody2D의 velocity를 직접 설정하여 보석을 플레이어 쪽으로 이동시킵니다.
-                gemRigidbody.velocity = newVelocity;
-            }
-        }
     }
 
     public void GainExp(int exp)

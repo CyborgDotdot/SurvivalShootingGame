@@ -12,17 +12,20 @@ public class Monster : MonoBehaviour
     public GameObject mEffect;
     public GameObject mItem;
 
+    private Rigidbody2D rb;
+
     private void Start()
     {
         target = GameObject.FindGameObjectWithTag("Player");
+        rb = GetComponent<Rigidbody2D>();
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if (target != null)
         {
             Vector2 dir = (target.transform.position - transform.position).normalized;
-            transform.Translate(dir * mSpeed * Time.deltaTime);
+            rb.velocity = dir * mSpeed; // Rigidbody의 속도를 설정하여 등속 이동을 합니다.
 
             float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
             transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
@@ -38,11 +41,6 @@ public class Monster : MonoBehaviour
             {
                 player.TakeDamage(mDamage);
             }
-            Destroy(gameObject);
-        }
-        else if (other.CompareTag("Weapon"))
-        {
-            ItemDrop();
         }
     }
 
@@ -52,11 +50,16 @@ public class Monster : MonoBehaviour
 
         if (mHealth <= 0)
         {
-            GameObject _mEffect = Instantiate(mEffect, transform.position, Quaternion.identity);
-            Destroy(_mEffect,1);
             ItemDrop();
+            DeathEffect();
             Destroy(gameObject);
         }
+    }
+
+    private void DeathEffect()
+    {
+        GameObject _mEffect = Instantiate(mEffect, transform.position, Quaternion.identity);
+        Destroy(_mEffect, 1);
     }
 
     private void ItemDrop()

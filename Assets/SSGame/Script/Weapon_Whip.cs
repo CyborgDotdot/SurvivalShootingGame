@@ -2,14 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Weapon : MonoBehaviour
+public class Weapon_Whip : MonoBehaviour
 {
     public int damage = 10;
     public float attackDuration = 0.5f; // 공격 지속 시간
     public float cooldown = 1.5f; // 쿨타임
 
     private SpriteRenderer spriteRenderer;
-    private bool isCooldown = false; // 쿨타임 상태를 추적
 
     void Start()
     {

@@ -1,32 +1,40 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI; // UI 사용을 위해 추가
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
     [Header("Health Settings")]
-    public int maxHealth = 10;
-    private int currentHealth;
+    public Slider healthBar;
+    public float maxHealth = 10f;
+    private float currentHealth;
+    public float healthRecoveryRate = 0.1f; // 체력이 회복되는 비율 (예: 0.1 = 최대 체력의 10%)
+    public float healthRecoveryInterval = 5f; // 체력이 회복되는 시간 간격 (초)
+    private float healthRecoveryTimer = 0f; // 타이머 변수
 
     [Header("Experience Settings")]
-    public Slider expBar; // 경험치 바 UI
+    public Slider expBar;
     private int currentExp = 0;
     public int expToLevelUp = 100; // 레벨업을 위한 필요 경험치
 
     [Header("Level Up UI")]
-    public GameObject levelUpUI; // 레벨업 UI
+    public GameObject levelUpUI;
 
     [Header("Effects")]
     public GameObject playerEffect;
+
+    [Header("Game Over UI")]
+    public GameObject gameOverUI;
 
     private void Awake()
     {
         if (instance == null)
         {
             instance = this;
+            DontDestroyOnLoad(gameObject);
         }
         else if (instance != this)
         {
@@ -37,42 +45,57 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         currentHealth = maxHealth;
-        expBar.value = CalculateExpProgress();
+        healthBar.maxValue = maxHealth;
+        healthBar.value = currentHealth;
+
+        expBar.maxValue = expToLevelUp;
+        expBar.value = 0;
+
         levelUpUI.SetActive(false);
+        gameOverUI.SetActive(false);
     }
 
     void Update()
     {
-
+        // 체력 회복 로직
+        if (currentHealth < maxHealth)
+        {
+            healthRecoveryTimer += Time.deltaTime;
+            if (healthRecoveryTimer >= healthRecoveryInterval)
+            {
+                RecoverHealth();
+                healthRecoveryTimer = 0f; // 타이머 초기화
+            }
+        }
+    }
+    void RecoverHealth()
+    {
+        float healthToRecover = maxHealth * healthRecoveryRate;
+        currentHealth += healthToRecover;
+        if (currentHealth > maxHealth)
+        {
+            currentHealth = maxHealth;
+        }
+        healthBar.value = currentHealth;
     }
 
     public void GainExp(int exp)
     {
         currentExp += exp;
-        expBar.value = CalculateExpProgress();
-
+        expBar.value = currentExp;
         if (currentExp >= expToLevelUp)
         {
             LevelUp();
         }
     }
 
-    float CalculateExpProgress()
-    {
-        return (float)currentExp / expToLevelUp;
-    }
-
     public void LevelUp()
     {
-        // 게임 일시정지
         Time.timeScale = 0f;
-
-        // UI Active
         levelUpUI.SetActive(true);
 
-        // 경험치 및 레벨업 관련 처리
-        currentExp = 0; // 혹은 currentExp -= expToLevelUp; 로 레벨업 후 남은 경험치를 유지
-        expBar.value = CalculateExpProgress();
+        currentExp = 0;
+        expBar.value = 0;
         // 추가적인 레벨업 처리 로직
     }
 
@@ -81,11 +104,14 @@ public class GameManager : MonoBehaviour
         // 게임 재개
         Time.timeScale = 1f;
         levelUpUI.SetActive(false);
+        gameOverUI.SetActive(false);
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
         currentHealth -= damage;
+        healthBar.value = currentHealth;
+
         if (currentHealth <= 0)
         {
             GameOver();
@@ -95,17 +121,15 @@ public class GameManager : MonoBehaviour
     public void GameOver()
     {
         GameObject playerObject = GameObject.Find("Player");
-        if (playerObject != null)
-        {
-            GameObject effect = Instantiate(playerEffect, playerObject.transform.position, Quaternion.identity);
-            Destroy(effect, 1f);
+        DeathEffect(playerObject);
+        playerObject.SetActive(false);
+        Time.timeScale = 0f;
+        gameOverUI.SetActive(true);
+    }
 
-            playerObject.SetActive(false);
-        }
-        else
-        {
-            Debug.LogError("Player 오브젝트를 찾을 수 없습니다. Player 오브젝트의 이름이 정확한지 확인해주세요.");
-        }
-        Debug.Log("Game Over!");
+    private void DeathEffect(GameObject playerObject)
+    {
+        GameObject effect = Instantiate(playerEffect, playerObject.transform.position, Quaternion.identity);
+        Destroy(effect, 1f);
     }
 }
