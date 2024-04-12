@@ -7,11 +7,12 @@ TagManager:
   - Monster
   - Weapon
   - Gem
+  - FxTemporaire
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Monster
   - Water
   - UI
   - Gem

@@ -13,6 +13,7 @@ public class Monster : MonoBehaviour
     public GameObject mItem;
 
     private Rigidbody2D rb;
+    private bool isPushedBack = false;
 
     private void Start()
     {
@@ -22,14 +23,31 @@ public class Monster : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (target != null)
+        if (target != null && !isPushedBack) // 밀려남 상태가 아닐 때만 이동
         {
             Vector2 dir = (target.transform.position - transform.position).normalized;
-            rb.velocity = dir * mSpeed; // Rigidbody의 속도를 설정하여 등속 이동을 합니다.
+            rb.velocity = dir * mSpeed;
 
             float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
             transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
         }
+    }
+
+    // 밀려남 상태를 설정하는 메서드 추가
+    public void SetPushedBack(bool state)
+    {
+        isPushedBack = state;
+        if (state)
+        {
+            // 밀려난 후 일정 시간 동안 이동을 멈추게 함
+            Invoke(nameof(ResetPushedBack), 0.5f); // 0.5초 후에 밀려남 상태를 리셋
+        }
+    }
+
+    // 밀려남 상태를 리셋하는 메서드
+    private void ResetPushedBack()
+    {
+        isPushedBack = false;
     }
 
     void OnTriggerEnter2D(Collider2D other)

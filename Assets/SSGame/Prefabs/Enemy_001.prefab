@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6723507578491581594}
   - component: {fileID: 7916995297092723421}
   - component: {fileID: 8922819118191006898}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Enemy_001
   m_TagString: Monster
   m_Icon: {fileID: 0}
@@ -100,7 +100,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mSpeed: 1
-  mHealth: 1
+  mHealth: 50
   mDamage: 1
   mEffect: {fileID: 1201766532104106504, guid: 16f3997c9befa9b40a4404fa73325bcb, type: 3}
   mItem: {fileID: 4530950704843405045, guid: 85bf732d836a319429df81aca02b56df, type: 3}

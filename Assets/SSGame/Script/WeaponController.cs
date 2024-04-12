@@ -4,8 +4,13 @@ using UnityEngine;
 
 public class WeaponController : MonoBehaviour
 {
-    public Weapon_Whip[] weaponPrefabs; // 사용 가능한 무기 프리팹 배열
-    private List<Weapon_Whip> equippedWeapons = new List<Weapon_Whip>(); // 현재 장착된 무기 목록
+    public Weapon[] weaponPrefabs; // 사용 가능한 무기 프리팹 배열
+    private List<Weapon> equippedWeapons = new List<Weapon>(); // 현재 장착된 무기 목록
+
+    public void Start()
+    {
+        EquipWeapon(0, transform.position);
+    }
 
     // 무기를 생성하고 장착하는 메서드
     public void EquipWeapon(int weaponIndex, Vector3 position)
@@ -17,12 +22,12 @@ public class WeaponController : MonoBehaviour
         }
 
         // 해당 인덱스의 무기 프리팹을 인스턴스화하여 장착합니다.
-        Weapon_Whip newWeapon = Instantiate(weaponPrefabs[weaponIndex], position, Quaternion.identity, transform);
+        Weapon newWeapon = Instantiate(weaponPrefabs[weaponIndex], position, Quaternion.identity, transform);
         equippedWeapons.Add(newWeapon);
     }
 
     // 특정 무기를 해제하는 메서드
-    public void UnequipWeapon(Weapon_Whip weapon)
+    public void UnequipWeapon(Weapon weapon)
     {
         if (equippedWeapons.Contains(weapon))
         {

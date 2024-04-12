@@ -1,58 +1,45 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Weapon_Whip : MonoBehaviour
+public class Weapon_Whip : Weapon
 {
-    public int damage = 10;
-    public float attackDuration = 0.5f; // 공격 지속 시간
-    public float cooldown = 1.5f; // 쿨타임
+    public float pushBackForce; // 밀어내는 힘의 크기
+    public float attackRange; // 공격 범위
 
-    private SpriteRenderer spriteRenderer;
-
-    void Start()
+    protected override void Start()
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        if (spriteRenderer == null)
-        {
-            Debug.LogError("Weapon: SpriteRenderer 컴포넌트가 없습니다.");
-        }
-
-        // 게임 시작 시 자동으로 공격 주기를 시작합니다.
-        StartCoroutine(AutoAttackRoutine());
+        base.Start(); // 부모 클래스의 Start 메서드 호출
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    protected override void StartAttack()
     {
-        if (other.CompareTag("Monster"))
+        isAttacking = true; // 공격 상태로 설정
+        if (animator != null)
         {
-            Monster monster = other.GetComponent<Monster>();
+            animator.SetBool("isAttacking", true); // 애니메이션 상태 업데이트
+        }
 
-            if (monster != null && spriteRenderer.enabled == true) // 스프라이트가 활성화된 상태에서만 데미지를 줍니다.
+        // 공격 범위 내의 모든 몬스터를 감지하고 밀어냅니다.
+        Collider2D[] monsters = Physics2D.OverlapCircleAll(transform.position, attackRange, monsterLayerMask);
+        foreach (Collider2D monsterCollider in monsters)
+        {
+            Monster monster = monsterCollider.GetComponent<Monster>();
+            if (monster != null)
             {
-                monster.TakeDamage(damage);
+                monster.TakeDamage(damage); // 몬스터에게 피해를 줍니다.
+                PushBack(monster); // 밀어냅니다.
             }
         }
     }
 
-    IEnumerator AutoAttackRoutine()
+    // 몬스터를 밀어내는 메서드
+    private void PushBack(Monster monster)
     {
-        while (true) // 무한 루프를 사용하여 주기적으로 반복합니다.
+        Rigidbody2D monsterRigidbody = monster.GetComponent<Rigidbody2D>();
+        if (monsterRigidbody != null)
         {
-            StartAttack();
-            yield return new WaitForSeconds(attackDuration); // 공격 지속 시간 동안 대기
-            EndAttack();
-            yield return new WaitForSeconds(cooldown); // 쿨타임 동안 대기
+            Vector2 forceDirection = monsterRigidbody.position - (Vector2)transform.position; // 밀어내는 방향
+            forceDirection.Normalize(); // 방향 벡터를 단위 벡터로 만듦
+            monsterRigidbody.AddForce(forceDirection * pushBackForce, ForceMode2D.Impulse); // 밀어내는 힘 적용
         }
-    }
-
-    void StartAttack()
-    {
-        spriteRenderer.enabled = true; // 스프라이트를 활성화하여 공격 표시
-    }
-
-    void EndAttack()
-    {
-        spriteRenderer.enabled = false; // 스프라이트를 비활성화하여 공격 종료 표시
     }
 }
