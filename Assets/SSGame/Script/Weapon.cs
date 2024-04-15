@@ -9,11 +9,9 @@ public abstract class Weapon : MonoBehaviour
     public LayerMask monsterLayerMask; // 몬스터 레이어 마스크
 
     protected bool isAttacking = false;
-    protected Animator animator;
 
     protected virtual void Start()
     {
-        animator = GetComponent<Animator>();
         StartCoroutine(AutoAttackRoutine());
     }
 
@@ -33,9 +31,5 @@ public abstract class Weapon : MonoBehaviour
     protected virtual void EndAttack()
     {
         isAttacking = false;
-        if (animator != null)
-        {
-            animator.SetBool("isAttacking", false);
-        }
     }
 }

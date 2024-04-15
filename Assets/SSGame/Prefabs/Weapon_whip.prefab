@@ -155,11 +155,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d2a41a4470434940b85afcc46feafa5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 1
+  damage: 5
   attackDuration: 0.1
-  cooldown: 0.1
-  attackRange: 2
+  cooldown: 0.5
   monsterLayerMask:
     serializedVersion: 2
     m_Bits: 8
   pushBackForce: 1
+  attackRange: 2

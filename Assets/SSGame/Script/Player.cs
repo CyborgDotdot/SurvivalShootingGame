@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
     Animator animator;
     public Rigidbody2D gRigidbody;
     [SerializeField] private float moveSpeed;
+    public string lastInputDirection = "";
 
     void Start()
     {
@@ -20,22 +21,34 @@ public class Player : MonoBehaviour
         float moveY = moveSpeed * Time.deltaTime * Input.GetAxis("Vertical");
 
         if (Input.GetAxis("Horizontal") <= -0.5f)
+        {
             animator.SetBool("left", true);
+            lastInputDirection = "left"; // 왼쪽 방향 업데이트
+        }
         else
             animator.SetBool("left", false);
 
         if (Input.GetAxis("Horizontal") >= 0.5f)
+        {
             animator.SetBool("right", true);
+            lastInputDirection = "right"; // 오른쪽 방향 업데이트
+        }
         else
             animator.SetBool("right", false);
 
         if (Input.GetAxis("Vertical") >= 0.5f)
+        {
             animator.SetBool("back", true);
+            lastInputDirection = "back"; // 위쪽 방향 업데이트
+        }
         else
             animator.SetBool("back", false);
 
         if (Input.GetAxis("Vertical") <= -0.5f)
+        {
             animator.SetBool("front", true);
+            lastInputDirection = "front"; // 아래쪽 방향 업데이트
+        }
         else
             animator.SetBool("front", false);
 

@@ -40,7 +40,7 @@ public class Monster : MonoBehaviour
         if (state)
         {
             // 밀려난 후 일정 시간 동안 이동을 멈추게 함
-            Invoke(nameof(ResetPushedBack), 0.5f); // 0.5초 후에 밀려남 상태를 리셋
+            Invoke(nameof(ResetPushedBack), 0.1f); // 0.5초 후에 밀려남 상태를 리셋
         }
     }
 
